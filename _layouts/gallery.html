@@ -1,0 +1,34 @@
+---
+layout: default
+---
+{% assign sections = site.categories | keys %}
+{% for section in sections %}
+  <h2>{{ section | capitalize }}</h2>
+  <div class="section-grid">
+    {% assign posts_in_section = site.categories[section] %}
+    {% for post in posts_in_section %}
+      <div class="image-card">
+        <a href="{{ post.url | relative_url }}">
+          <div class="image-overlay">
+            <span class="views">{{ post.views }} views</span>
+            {% if post.trending %}<span class="trending">🔥</span>{% endif %}
+            <span class="pin-button">📌</span>
+          </div>
+          <img src="{{ post.image }}" alt="{{ post.alt }}">
+        </a>
+        {% if post.caption %}<p class="caption">{{ post.caption }}</p>{% endif %}
+      </div>
+    {% endfor %}
+  </div>
+{% endfor %}
+<style>
+.section-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1.5em; margin-bottom:3em; }
+.image-card { position:relative; border:1px solid #ddd; border-radius:15px; overflow:hidden; transition:transform 0.2s; background:#fff;}
+.image-card:hover{transform:scale(1.03);}
+.image-card img{width:100%; border-radius:15px;}
+.caption{font-size:0.85em; padding:0.3em; text-align:center;}
+.image-overlay{position:absolute; top:5px; left:5px; display:flex; gap:0.5em;}
+.image-overlay span{background:rgba(0,0,0,0.6); color:#fff; padding:2px 5px; border-radius:5px; font-size:0.8em;}
+.trending{color:#ff6f61;}
+.pin-button{cursor:pointer;}
+</style>

@@ -1,30 +1,39 @@
 ---
 layout: default
 ---
-<link href="/css/override.css" rel="stylesheet" type="text/css">
-<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
-
-  <header class="post-header">
-    <h1 class="post-title p-name" itemprop="name headline">{{ page.title | escape }}</h1>
-    <p class="post-meta">
-      <time class="dt-published" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
-        {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
-        {{ page.date | date: date_format }}
-      </time>
-      {% assign author = page.author | default: site.author %}
-      {%- if author -%}
-        • <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{{ author }}</span></span>
-      {%- endif -%}</p>
-  </header>
-
-  <div class="share-links">
-    {% include sharelinks.html %}
+<nav class="breadcrumbs"><a href="{{ site.baseurl }}/">Home</a> / {% for cat in page.categories %}<a href="{{ site.baseurl }}/categories/{{ cat }}">{{ cat | capitalize }}</a> / {% endfor %}{{ page.title }}</nav>
+<article class="post-image">
+  <h1>{{ page.title }}</h1>
+  <div class="post-image-container">
+    <img src="{{ page.image }}" alt="{{ page.alt }}">
+    <div class="post-buttons">
+      <button onclick="downloadImage('{{ page.image | absolute_url }}')">⬇️ Download</button>
+      <button onclick="printHighRes('{{ page.image | absolute_url }}')">🖨️ Print</button>
+      <a href="https://www.pinterest.com/pin/create/button/?url={{ page.url | absolute_url }}&media={{ page.image | absolute_url }}&description={{ page.alt }}" target="_blank">📌 Pin</a>
+    </div>
   </div>
-
-  <div class="post-content e-content" itemprop="articleBody">
-    {{ content }}
-    {% include navlinks.html %}
+  {% if page.caption %}<p class="caption">{{ page.caption }}</p>{% endif %}
+  <h3>People also loved</h3>
+  <div class="related-grid">
+    {% assign related = site.posts | where_exp:"p","p.categories contains page.categories[0]" | sample:4 %}
+    {% for r in related %}
+      {% if r.url != page.url %}
+      <a href="{{ r.url | relative_url }}"><div class="related-card"><img src="{{ r.image }}" alt="{{ r.alt }}"></div></a>
+      {% endif %}
+    {% endfor %}
   </div>
-
-  <a class="u-url" href="{{ page.url | relative_url }}" hidden></a>
 </article>
+<script>
+function downloadImage(url){const a=document.createElement('a');a.href=url;a.download='image';document.body.appendChild(a);a.click();a.remove();}
+function printHighRes(url){var w=window.open('','Print');w.document.write('<img src="'+url+'" style="width:100%">');w.document.write('<script>window.print();window.close();<\/script>');}
+</script>
+<style>
+.post-image-container{text-align:center;margin:2em 0;}
+.post-image-container img{max-width:100%; border-radius:15px;}
+.post-buttons{display:flex; justify-content:center; gap:1em; margin:1em 0;}
+.post-buttons button, .post-buttons a{padding:0.5em 1em; background:#ff6f61;color:#fff;border:none;border-radius:5px;text-decoration:none;cursor:pointer;}
+.post-buttons button:hover,.post-buttons a:hover{background:#ff4a3a;}
+.related-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1em; margin-top:1em;}
+.related-card img{width:100%; border-radius:10px; border:1px solid #ddd;}
+.breadcrumbs{font-size:0.8em; margin:0.5em 0; color:#555;}
+</style>
